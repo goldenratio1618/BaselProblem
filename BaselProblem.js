@@ -349,11 +349,16 @@ var getCustomCost = (level) => {
 };
 
 var updateAvailability = () => {
+    t_speed.isAvailable = true;
+    r_upgrade.isAvailable = true;
     t_upgrade.isAvailable = r_upgrade.level > 0;
     a_level.isAvailable = t_upgrade.level > 0;
     dimension.isAvailable = a_level.level > 5;
     final_a_level.isAvailable = dimension.level > 7;
 
+
+    c1.isAvailable = true;
+    c2.isAvailable = true;
     c3.isAvailable = dimension.level > 0;
     c4.isAvailable = dimension.level > 1;
     c5.isAvailable = dimension.level > 2;
