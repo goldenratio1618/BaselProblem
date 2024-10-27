@@ -94,7 +94,7 @@ var init = () => {
     {
         let getDesc = (level) => "c_3=3^{" + level + "}";
         let getInfo = (level) => "c_3=" + getC3(level).toString(0);
-        c3 = theory.createUpgrade(2, currency, new ExponentialCost(19683, Math.log2(19683)));
+        c3 = theory.createUpgrade(3, currency, new ExponentialCost(19683, Math.log2(19683)));
         c3.getDescription = (_) => Utils.getMath(getDesc(c3.level));
         c3.getInfo = (amount) => Utils.getMathTo(getInfo(c3.level), getInfo(c3.level + amount));
     }
@@ -103,7 +103,7 @@ var init = () => {
     {
         let getDesc = (level) => "c_4=4^{" + level + "}";
         let getInfo = (level) => "c_4=" + getC4(level).toString(0);
-        c4 = theory.createUpgrade(2, currency, new ExponentialCost(Math.pow(4,16), 32));
+        c4 = theory.createUpgrade(4, currency, new ExponentialCost(Math.pow(4,16), 32));
         c4.getDescription = (_) => Utils.getMath(getDesc(c4.level));
         c4.getInfo = (amount) => Utils.getMathTo(getInfo(c4.level), getInfo(c4.level + amount));
     }
@@ -112,7 +112,7 @@ var init = () => {
     {
         let getDesc = (level) => "c_5=5^{" + level + "}";
         let getInfo = (level) => "c_5=" + getC5(level).toString(0);
-        c5 = theory.createUpgrade(2, currency, new ExponentialCost(Math.pow(5,25), 25*Math.log2(5)));
+        c5 = theory.createUpgrade(5, currency, new ExponentialCost(Math.pow(5,25), 25*Math.log2(5)));
         c5.getDescription = (_) => Utils.getMath(getDesc(c5.level));
         c5.getInfo = (amount) => Utils.getMathTo(getInfo(c5.level), getInfo(c5.level + amount));
     }
@@ -121,7 +121,7 @@ var init = () => {
     {
         let getDesc = (level) => "c_6=6^{" + level + "}";
         let getInfo = (level) => "c_6=" + getC6(level).toString(0);
-        c6 = theory.createUpgrade(2, currency, new ExponentialCost(Math.pow(6,36), 36*Math.log2(6)));
+        c6 = theory.createUpgrade(6, currency, new ExponentialCost(Math.pow(6,36), 36*Math.log2(6)));
         c6.getDescription = (_) => Utils.getMath(getDesc(c6.level));
         c6.getInfo = (amount) => Utils.getMathTo(getInfo(c6.level), getInfo(c6.level + amount));
     }
@@ -130,7 +130,7 @@ var init = () => {
     {
         let getDesc = (level) => "c_7=7^{" + level + "}";
         let getInfo = (level) => "c_7=" + getC7(level).toString(0);
-        c7 = theory.createUpgrade(2, currency, new ExponentialCost(Math.pow(7,49), 49*Math.log2(7)));
+        c7 = theory.createUpgrade(7, currency, new ExponentialCost(Math.pow(7,49), 49*Math.log2(7)));
         c7.getDescription = (_) => Utils.getMath(getDesc(c7.level));
         c7.getInfo = (amount) => Utils.getMathTo(getInfo(c7.level), getInfo(c7.level + amount));
     }
@@ -139,7 +139,7 @@ var init = () => {
     {
         let getDesc = (level) => "c_8=8^{" + level + "}";
         let getInfo = (level) => "c_8=" + getC8(level).toString(0);
-        c8 = theory.createUpgrade(2, currency, new ExponentialCost(Math.pow(8,64), 64*Math.log2(8)));
+        c8 = theory.createUpgrade(8, currency, new ExponentialCost(Math.pow(8,64), 64*Math.log2(8)));
         c8.getDescription = (_) => Utils.getMath(getDesc(c8.level));
         c8.getInfo = (amount) => Utils.getMathTo(getInfo(c8.level), getInfo(c8.level + amount));
     }
@@ -148,7 +148,7 @@ var init = () => {
     {
         let getDesc = (level) => "c_9=9^{" + level + "}";
         let getInfo = (level) => "c_9=" + getC9(level).toString(0);
-        c9 = theory.createUpgrade(2, currency, new ExponentialCost(Math.pow(9,81), 81*Math.log2(9)));
+        c9 = theory.createUpgrade(9, currency, new ExponentialCost(Math.pow(9,81), 81*Math.log2(9)));
         c9.getDescription = (_) => Utils.getMath(getDesc(c9.level));
         c9.getInfo = (amount) => Utils.getMathTo(getInfo(c9.level), getInfo(c9.level + amount));
     }
@@ -157,7 +157,7 @@ var init = () => {
     {
         let getDesc = (level) => "c_{10}=10^{" + level + "}";
         let getInfo = (level) => "c_{10}=" + getC10(level).toString(0);
-        c10 = theory.createUpgrade(2, currency, new ExponentialCost(Math.pow(10,100), 100*Math.log2(10)));
+        c10 = theory.createUpgrade(10, currency, new ExponentialCost(Math.pow(10,100), 100*Math.log2(10)));
         c10.getDescription = (_) => Utils.getMath(getDesc(c10.level));
         c10.getInfo = (amount) => Utils.getMathTo(getInfo(c10.level), getInfo(c10.level + amount));
     }
@@ -180,7 +180,7 @@ var init = () => {
     }
 
     {
-        t_upgrade = theory.createMilestoneUpgrade(0, 1);
+        t_upgrade = theory.createMilestoneUpgrade(1, 1);
         t_upgrade.getDescription = () => "Improve variable $t$.";
         t_upgrade.getInfo = () => "Moves $t$ outside the $a$ exponent."
         t_upgrade.boughtOrRefunded = (_) => { theory.invalidatePrimaryEquation(); theory.invalidateSecondaryEquation(); theory.invalidateTertiaryEquation(); updateAvailability();}
@@ -188,7 +188,7 @@ var init = () => {
     }
 
     {
-        a_level = theory.createMilestoneUpgrade(0, 6);
+        a_level = theory.createMilestoneUpgrade(2, 6);
         a_level.getDescription = (_) => "$\\uparrow a$ by 0.05";
         a_level.getInfo = () => "$a \to 0.3 + $" + (0.3 + a_level.level * 0.05).toFixed(2);
         a_level.boughtOrRefunded = (_) => { theory.invalidatePrimaryEquation(); updateAvailability(); }
@@ -196,7 +196,7 @@ var init = () => {
     }
 
     {
-        dimension = theory.createMilestoneUpgrade(0, 8);
+        dimension = theory.createMilestoneUpgrade(3, 8);
         dimension.getDescription = () => "Unlock $q_" + (dimension.level + 2) + "$";
         dimension.getInfo = () => Localization.getUpgradeAddDimensionDesc();
         dimension.boughtOrRefunded = (_) => { theory.invalidatePrimaryEquation(); theory.invalidateSecondaryEquation(); theory.invalidateTertiaryEquation(); updateAvailability(); }
@@ -204,7 +204,7 @@ var init = () => {
     }
 
     {
-        final_a_level = theory.createMilestoneUpgrade(0, 1);
+        final_a_level = theory.createMilestoneUpgrade(4, 1);
         final_a_level.getDescription = () => "$a \to \frac{6}{\pi^2}";
         final_a_level.getInfo = () => "Sets $a = \frac{6}{\pi^2}";
         final_a_level.boughtOrRefunded = (_) => { theory.invalidatePrimaryEquation(); updateAvailability(); }
