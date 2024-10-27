@@ -520,7 +520,7 @@ var getPrimaryEquation = () => {
     }
 
     let inside_parens_term;
-    if (t_upgrade_level > 0) {
+    if (t_upgrade.level > 0) {
         inside_parens_term = "t q_1 r";
     } else {
         inside_parens_term = "q_1 r";
