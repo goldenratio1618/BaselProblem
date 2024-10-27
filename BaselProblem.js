@@ -244,7 +244,7 @@ var init = () => {
     story_chapter_3 += "What if the series doesn't diverge\n";
     story_chapter_3 += "and converges after all?\n";
     story_chapter_3 += "You make a small modification to the computation of rdot.";
-    theory.createStoryChapter(2, "Challenging Assumptions", story_chapter_3, () => currency.value > BigNumber.from(1e10)); // unlocked at R dimension milestone
+    theory.createStoryChapter(2, "Challenging Assumptions", story_chapter_3, () => currency.value > BigNumber.TEN.pow(10)); // unlocked at R dimension milestone
 
     let story_chapter_4 = "";
     story_chapter_4 += "Your progress has improved dramatically since revisiting your hypothesis.\n";
@@ -253,7 +253,7 @@ var init = () => {
     story_chapter_4 += "You're starting to get stuck again.\n";
     story_chapter_4 += "Maybe making time move faster will help.\n";
     story_chapter_4 += "You take the variable 't' and move it to a different part of your equation.";
-    theory.createStoryChapter(3, "Temporal Manipulation", story_chapter_4, () => currency.value > BigNumber.from(1e15)); // unlocked at I dimension milestone
+    theory.createStoryChapter(3, "Temporal Manipulation", story_chapter_4, () => currency.value > BigNumber.TEN.pow(15)); // unlocked at I dimension milestone
 
     let story_chapter_5 = "";
     story_chapter_5 += "You manage to create a lower bound for the number the series converges to.\n";
@@ -263,7 +263,7 @@ var init = () => {
     story_chapter_5 += "\"Have you tried modifying the variable 'a'?\"\n";
     story_chapter_5 += "You realize that in all your research, you'd never thought to change that value.\n";
     story_chapter_5 += "You try increasing the value of 'a', and see what happens.\n";
-    theory.createStoryChapter(4, "Exponential Growth", story_chapter_5, () => currency.value > BigNumber.from(1e20)); // unlocked at a_base first milestone
+    theory.createStoryChapter(4, "Exponential Growth", story_chapter_5, () => currency.value > BigNumber.TEN.pow(20)); // unlocked at a_base first milestone
 
     let story_chapter_6 = "";
     story_chapter_6 += "It worked!\n"
@@ -273,7 +273,7 @@ var init = () => {
     story_chapter_6 += "But you want to improve the bounds.\n";
     story_chapter_6 += "You look over your equation again and realize you've never manipulated the variable 'q1'.\n";
     story_chapter_6 += "You try adding a variable 'q2' and see what happens.";
-    theory.createStoryChapter(5, "Bounds", story_chapter_6, () => currency.value > BigNumber.from(1e50)); // unlocked at a_base last milestone
+    theory.createStoryChapter(5, "Bounds", story_chapter_6, () => currency.value > BigNumber.TEN.pow(50)); // unlocked at a_base last milestone
 
     let story_chapter_7 = "";
     story_chapter_7 += "You've been making good progress.\n";
@@ -282,7 +282,7 @@ var init = () => {
     story_chapter_7 += "But you're not satisfied.\n";
     story_chapter_7 += "You want to know the exact value.\n";
     story_chapter_7 += "You continue onwards...";
-    theory.createStoryChapter(6, "Getting Close", story_chapter_7, () => currency.value > BigNumber.from(1e400)); // unlocked at a_exponent first milestone
+    theory.createStoryChapter(6, "Getting Close", story_chapter_7, () => currency.value > BigNumber.TEN.pow(400)); // unlocked at a_exponent first milestone
 
     let story_chapter_8 = "";
     story_chapter_8 += "Months have passed.\n";
@@ -293,7 +293,7 @@ var init = () => {
     story_chapter_8 += "Is this the end?\n";
     story_chapter_8 += "You're not quite ready to give up yet.\n";
     story_chapter_8 += "You continue to forge ahead with your research, as slow as it might be.\n";
-    theory.createStoryChapter(7, "Desperation", story_chapter_8, () => currency.value > BigNumber.from(1e1400)); // unlocked at a_exp and a_base max milestone
+    theory.createStoryChapter(7, "Desperation", story_chapter_8, () => currency.value > BigNumber.TEN.pow(1400)); // unlocked at a_exp and a_base max milestone
 
     let story_chapter_9 = "";
     story_chapter_9 += "One night, you sleep restlessly.\n";
@@ -308,7 +308,7 @@ var init = () => {
     story_chapter_9 += "And you know how to prove it.\n";
     story_chapter_9 += "You leap out of bed.\n";
     story_chapter_9 += "Hands shaking with excitement, you make one final change to the variable 'a'.\n";
-    theory.createStoryChapter(8, "EUREKA!!!", story_chapter_9, () => b_base.level > 0); // unlocked at tau = e100 (b2 first milestone)
+    theory.createStoryChapter(8, "EUREKA!!!", story_chapter_9, () => currency.value > BigNumber.TEN.pow(1500)); // unlocked at tau = e100 (b2 first milestone)
 
     let story_chapter_10 = "";
     story_chapter_10 += "You've finally done it.\n"
@@ -494,7 +494,9 @@ var tick = (elapsedTime, multiplier) => {
         r += getRdot(getC1(c1.level, r_upgrade.level > 0)) * dt;
 
         if (t_upgrade.level == 0) {
-            currency.value += dt * bonus * (t * q1 * r).pow(getA(a_level.level));
+            currency.value += dt * bonus * (t * q1 * r).pow(getA(a_level.level, final_a_level.level));
+        } else {
+            currency.value += dt * bonus * t * (q1 * r).pow(getA(a_level.level, final_a_level.level));
         }
     }
 
@@ -510,7 +512,7 @@ var tick = (elapsedTime, multiplier) => {
 // -------------------------------------------------------------------------------
 var getPrimaryEquation = () => {
     theory.primaryEquationScale = 1;
-    theory.primaryEquationHeight = 80;
+    theory.primaryEquationHeight = 50;
 
     // let everything be centered -> "{c}"
     let result = "\\begin{array}{c}\\dot{\\rho} = ";
@@ -531,7 +533,7 @@ var getPrimaryEquation = () => {
     result += "a = ";
 
     if (final_a_level.level == 0) {
-        result += getA(a_level.level).toNumber().toString(2);
+        result += getA(a_level.level, final_a_level.level)
     } else {
         result += "\\frac{6}{\\pi^2}"
     }
@@ -542,6 +544,8 @@ var getPrimaryEquation = () => {
 
 var getSecondaryEquation = () => {
     let result = "\\begin{array}{c}";
+    theory.secondaryEquationScale = 1.0;
+    theory.secondaryEquationHeight = 80;
 
     if (dimension.level == 0) {
         result += "\\dot{q_1} = c_2";
@@ -577,7 +581,7 @@ var getQuaternaryEntries = () => {
         quaternaryEntries.push(new QuaternaryEntry("t", null));
         quaternaryEntries.push(new QuaternaryEntry("q_1", null));
         for (let i = 1; i <= dimension.level; i++) {
-            quaternaryEntries.push(new QuaternaryEntry("q_1", null));
+            quaternaryEntries.push(new QuaternaryEntry("q_" + i, null));
         }
         quaternaryEntries.push(new QuaternaryEntry("r", null));
     }
@@ -586,7 +590,7 @@ var getQuaternaryEntries = () => {
     idx = 1
     q_values = [q1, q2, q3, q4, q5, q6, q7, q8, q9]
     for (let i = 0; i <= dimension.level; i++) {
-        quaternaryEntries[idx] = q_values[i].toString(2);
+        quaternaryEntries[idx].value = q_values[i].toString(2);
         idx += 1
     }
     quaternaryEntries[idx].value = r.toString(2);
