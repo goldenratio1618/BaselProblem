@@ -530,7 +530,7 @@ var tick = (elapsedTime, multiplier) => {
         r += getRdot(getC1(c1.level), r_upgrade.level > 0) * dt;
 
         if (t_upgrade.level == 0) {
-            currency.value += dt * bonus * (t * q1 * r).pow(getA(a_level.level, final_a_level.level));
+            currency.value += BigNumber.TEN.pow(5) * dt * bonus * (t * q1 * r).pow(getA(a_level.level, final_a_level.level));
         } else {
             currency.value += BigNumber.TEN.pow(10) * dt * bonus * t * (q1 * r).pow(getA(a_level.level, final_a_level.level));
         }
