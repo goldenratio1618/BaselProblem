@@ -15,8 +15,8 @@ import {game} from "./api/Game";
 
 requiresGameVersion("1.4.33");
 
-var id = "basel_problem";
-var name = "Basel Problem";
+var id = "basel_problem_speedup";
+var name = "Basel Problem (sped up)";
 var description =
   "The Basel Problem is an ancient problem asking what the infinite series of inverse squares converges to. " +
   "It was first solved by Euler in 1735. ";
