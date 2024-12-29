@@ -333,7 +333,7 @@ var init = () => {
     story_chapter_8 += "Is this the end?\n";
     story_chapter_8 += "You're not quite ready to give up yet.\n";
     story_chapter_8 += "You continue to forge ahead with your research, as slow as it might be.\n";
-    theory.createStoryChapter(7, "Desperation", story_chapter_8, () => currency.value > BigNumber.TEN.pow(getMilestoneCost(20)-50)); // unlocked at a_exp and a_base max milestone
+    theory.createStoryChapter(7, "Desperation", story_chapter_8, () => currency.value > BigNumber.TEN.pow(getMilestoneCost(19)-50)); // unlocked at a_exp and a_base max milestone
 
     let story_chapter_9 = "";
     story_chapter_9 += "One night, you sleep restlessly.\n";
@@ -348,7 +348,7 @@ var init = () => {
     story_chapter_9 += "And you know how to prove it.\n";
     story_chapter_9 += "You leap out of bed.\n";
     story_chapter_9 += "Hands shaking with excitement, you make one final change to the variable 'a'.\n";
-    theory.createStoryChapter(8, "EUREKA!!!", story_chapter_9, () => currency.value > BigNumber.TEN.pow(getMilestoneCost(20))); // unlocked at tau = e100 (b2 first milestone)
+    theory.createStoryChapter(8, "EUREKA!!!", story_chapter_9, () => currency.value > BigNumber.TEN.pow(getMilestoneCost(19))); // unlocked at tau = e100 (b2 first milestone)
 
     let story_chapter_10 = "";
     story_chapter_10 += "You've finally done it.\n"
