@@ -474,7 +474,7 @@ var getMilestoneCost = (level) => {
         case 18:
             return 850;
         case 19:
-            return 1050;
+            return 1000;
     }
     return 5000;
 };
