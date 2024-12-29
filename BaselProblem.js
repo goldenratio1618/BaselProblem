@@ -333,7 +333,7 @@ var init = () => {
     story_chapter_8 += "Is this the end?\n";
     story_chapter_8 += "You're not quite ready to give up yet.\n";
     story_chapter_8 += "You continue to forge ahead with your research, as slow as it might be.\n";
-    theory.createStoryChapter(7, "Desperation", story_chapter_8, () => currency.value > BigNumber.TEN.pow(getMilestoneCost(19)-50)); // unlocked at a_exp and a_base max milestone
+    theory.createStoryChapter(7, "Desperation", story_chapter_8, () => currency.value > BigNumber.TEN.pow(getMilestoneCost(19)-25)); // unlocked at a_exp and a_base max milestone
 
     let story_chapter_9 = "";
     story_chapter_9 += "One night, you sleep restlessly.\n";
