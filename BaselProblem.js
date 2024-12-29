@@ -404,7 +404,7 @@ var getAUpgradeCost = (level) => {
         case 7:
             return 600;
         case 8:
-            return 900;
+            return 850;
     }
     return 5000;
 };
@@ -472,9 +472,9 @@ var getMilestoneCost = (level) => {
         case 17:
             return 700;
         case 18:
-            return 900;
+            return 850;
         case 19:
-            return 1100;
+            return 1050;
     }
     return 5000;
 };
