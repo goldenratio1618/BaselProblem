@@ -171,7 +171,7 @@ var init = () => {
     {
         let getDesc = (level) => "n=" + getN(level).toString(0);
         let getInfo = (level) => "n=" + getN(level).toString(0);
-        n = theory.createUpgrade(11, currency, new ExponentialCost(Math.pow(10,20), 60*Math.log2(10)));
+        n = theory.createUpgrade(11, currency, new ExponentialCost(1, 60*Math.log2(10)));
         n.getDescription = (_) => Utils.getMath(getDesc(n.level));
         n.getInfo = (amount) => Utils.getMathTo(getInfo(n.level), getInfo(n.level + amount));
     }
@@ -758,7 +758,7 @@ var getC7 = (level) => BigNumber.SEVEN.pow(level);
 var getC8 = (level) => BigNumber.EIGHT.pow(level);
 var getC9 = (level) => BigNumber.NINE.pow(level);
 var getC10 = (level) => BigNumber.TEN.pow(level);
-var getN = (level) => Utils.getStepwisePowerSum(level, 6, 19, 0)+1;
+var getN = (level) => Utils.getStepwisePowerSum(level, 6, 16, 0)+1;
 var getA = (level, n_unlocked, n_value) => {
     if (n_unlocked) {
         let partial_sum = 0;
