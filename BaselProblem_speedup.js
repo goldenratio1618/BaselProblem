@@ -18,8 +18,12 @@ requiresGameVersion("1.4.33");
 var id = "basel_problem";
 var name = "Basel Problem";
 var description =
-  "The Basel Problem is an ancient problem asking what the infinite series of inverse squares converges to. " +
-  "It was first solved by Euler in 1735. ";
+    "The Basel problem is a legendary puzzle in mathematics, first proposed in the 17th century and famously solved by Leonhard Euler. " +
+    "It asks a deceptively simple question: what is the sum of the inverse squares of all positive integers? " +
+    "This infinite series, $\\frac{1}{1^2} + \\frac{1}{2^2} + \\frac{1}{3^2} + \\cdots, converges to a finite value...but what? " +
+    "\n" + "In the Basel Problem theory, stand in Euler's shoes as you navigate the world of inverse squares. " +
+    "Everything in this theory revolves around them - variables based on partial sums, variable power scaling, and even the publication multiplier. " +
+    "Can you figure out the solution to this ancient problem?";
 var authors = "Python's Koala (pythonskoala)";
 var version = 1.1;
 var releaseOrder = "1.1";
