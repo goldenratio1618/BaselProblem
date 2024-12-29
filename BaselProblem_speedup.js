@@ -245,8 +245,8 @@ var init = () => {
 
     {
         n_unlock = theory.createMilestoneUpgrade(4, 1);
-        n_unlock.getDescription = () => "Unlock variable $n$.";
-        n_unlock.getInfo = () => "Unlocks $n$.";
+        n_unlock.getDescription = () => "Unlock variable $n$";
+        n_unlock.getInfo = () => "Unlocks $n$";
         n_unlock.boughtOrRefunded = (_) => { theory.invalidatePrimaryEquation(); updateAvailability(); }
         n_unlock.canBeRefunded = (_) => true;
     }
