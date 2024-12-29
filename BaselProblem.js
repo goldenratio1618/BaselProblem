@@ -21,10 +21,10 @@ var description =
   "The Basel Problem is an ancient problem asking what the infinite series of inverse squares converges to. " +
   "It was first solved by Euler in 1735. ";
 var authors = "Python's Koala (pythonskoala)";
-var version = 1;
-var releaseOrder = "1";
+var version = 1.1;
+var releaseOrder = "1.1";
 
-var tauMultiplier = 0.3;
+var tauMultiplier = 0.4;
 
 // internal variables
 var currency;
@@ -43,10 +43,11 @@ var q7 = BigNumber.ONE;
 var q8 = BigNumber.ONE;
 var q9 = BigNumber.ONE;
 var r = BigNumber.ONE;
+var n = BigNumber.ONE;
 
 // milestone variables
 var r_upgrade, t_upgrade;
-var a_level, final_a_level;
+var a_level, n_unlock;
 var dimension;
 
 // graph variables
@@ -76,7 +77,7 @@ var init = () => {
     {
         let getDesc = (level) => "c_1=" + getC1(level).toString(0);
         let getInfo = (level) => "c_1=" + getC1(level).toString(0);
-        c1 = theory.createUpgrade(1, currency, new FirstFreeCost(new ExponentialCost(5, 0.1)));
+        c1 = theory.createUpgrade(1, currency, new FirstFreeCost(new ExponentialCost(0.0625, 0.25)));
         c1.getDescription = (_) => Utils.getMath(getDesc(c1.level));
         c1.getInfo = (amount) => Utils.getMathTo(getDesc(c1.level), getDesc(c1.level + amount));
     }
@@ -162,21 +163,56 @@ var init = () => {
         c10.getInfo = (amount) => Utils.getMathTo(getInfo(c10.level), getInfo(c10.level + amount));
     }
 
+    // n
+    {
+        let getDesc = (level) => "n=" + getN(level).toString(0);
+        let getInfo = (level) => "n=" + getN(level).toString(0);
+        n = theory.createUpgrade(11, currency, new ExponentialCost(Math.pow(10,20), 60*Math.log2(10)));
+        n.getDescription = (_) => Utils.getMath(getDesc(n.level));
+        n.getInfo = (amount) => Utils.getMathTo(getInfo(n.level), getInfo(n.level + amount));
+    }
+
 
     // Permanent Upgrades
-    theory.createPublicationUpgrade(0, currency, 1e8);
+    theory.createPublicationUpgrade(0, currency, 1e7);
     theory.createBuyAllUpgrade(1, currency, 1e12);
     theory.createAutoBuyerUpgrade(2, currency, 1e16);
 
+    {
+        perm1 = theory.createPermanentUpgrade(
+            3,
+            currency,
+            new CustomCost(level => BigNumber.TEN.pow(BigNumber.from(getAUpgradeCost(level))))
+        );
+        perm1.getDescription = (amount) => "$\\text{Unlock }a\\text{ milestone lv }$" + (perm1.level + 1);
+        perm1.getInfo = (amount) => "$\\text{Milestone: }\\uparrow a\\text{ by }\\frac{" + (9-perm1.level) + "^2}{1000}$";
+        perm1.boughtOrRefunded = (_) => {
+            updateAvailability();
+        };
+        perm1.maxLevel = 9;
+    }
+
+    {
+        perm2 = theory.createPermanentUpgrade(
+            4,
+            currency,
+            new CustomCost(level => BigNumber.TEN.pow(BigNumber.from(getQUpgradeCost(level))))
+        );
+        perm2.getDescription = (amount) => "$\\text{Unlock }q\\text{ milestone lv }$" + (perm2.level + 1);
+        perm2.getInfo = (amount) => "$\\text{Milestone: Unlock }q_{" + (perm2.level + 2)+"}$";
+        perm2.boughtOrRefunded = (_) => updateAvailability();
+        perm2.maxLevel = 8;
+    }
+
     // Milestone Upgrades
-    theory.setMilestoneCost(new CustomCost(total => BigNumber.from(tauMultiplier * getCustomCost(total))));
+    theory.setMilestoneCost(new CustomCost(total => BigNumber.from(tauMultiplier * getMilestoneCost(total))));
 
     {
         r_upgrade = theory.createMilestoneUpgrade(0, 1);
         r_upgrade.getDescription = () => "$\\text{Invert } \\dot{r} \\text{ equation}$";
         r_upgrade.getInfo = () => "Inverts the $\\dot{r}$ equation";
         r_upgrade.boughtOrRefunded = (_) => { theory.invalidatePrimaryEquation(); theory.invalidateSecondaryEquation(); theory.invalidateTertiaryEquation(); updateAvailability();}
-        r_upgrade.canBeRefunded = (_) => t_upgrade == 0;
+        r_upgrade.canBeRefunded = (_) => t_upgrade.level == 0;
     }
 
     {
@@ -184,31 +220,31 @@ var init = () => {
         t_upgrade.getDescription = () => "Improve variable $t$";
         t_upgrade.getInfo = () => "Moves $t$ outside the $a$ exponent."
         t_upgrade.boughtOrRefunded = (_) => { theory.invalidatePrimaryEquation(); theory.invalidateSecondaryEquation(); theory.invalidateTertiaryEquation(); updateAvailability();}
-        t_upgrade.canBeRefunded = (_) => a_level == 0;
+        t_upgrade.canBeRefunded = (_) => a_level.level == 0 && dimension.level == 0;
     }
 
     {
-        a_level = theory.createMilestoneUpgrade(2, 6);
-        a_level.getDescription = (_) => "$\\uparrow a$ by 0.05";
-        a_level.getInfo = () => "$a \\to $" + Math.min(0.6, 0.3 + (a_level.level + 1) * 0.05).toFixed(2);
+        a_level = theory.createMilestoneUpgrade(2, 9);
+        a_level.getDescription = (_) => "$\\uparrow a$ by $\\frac{" + (9-a_level.level) + "^2}{1000}$";
+        a_level.getInfo = () => "$a \\to $" + getA(a_level.level+1, false, 0).toFixed(3);
         a_level.boughtOrRefunded = (_) => { theory.invalidatePrimaryEquation(); updateAvailability(); }
-        a_level.canBeRefunded = (_) => dimension.level == 0;
+        a_level.canBeRefunded = (_) => n_unlock.level == 0;
     }
 
     {
         dimension = theory.createMilestoneUpgrade(3, 8);
-        dimension.getDescription = () => "Unlock $q_" + Math.min(9, dimension.level + 2) + "$";
+        dimension.getDescription = () => "Unlock $q_{" + Math.min(9, dimension.level + 2) + "}$";
         dimension.getInfo = () => Localization.getUpgradeAddDimensionDesc();
         dimension.boughtOrRefunded = (_) => { theory.invalidatePrimaryEquation(); theory.invalidateSecondaryEquation(); theory.invalidateTertiaryEquation(); updateAvailability(); }
-        dimension.canBeRefunded = (_) => final_a_level == 0;
+        dimension.canBeRefunded = (_) => n_unlock.level == 0;
     }
 
     {
-        final_a_level = theory.createMilestoneUpgrade(4, 1);
-        final_a_level.getDescription = () => "$a \\to \\frac{6}{\\pi^2}$";
-        final_a_level.getInfo = () => "Sets $a = \\frac{6}{\\pi^2}$";
-        final_a_level.boughtOrRefunded = (_) => { theory.invalidatePrimaryEquation(); updateAvailability(); }
-        final_a_level.canBeRefunded = (_) => true;
+        n_unlock = theory.createMilestoneUpgrade(4, 1);
+        n_unlock.getDescription = () => "Unlock variable $n$.";
+        n_unlock.getInfo = () => "Unlocks $n$.";
+        n_unlock.boughtOrRefunded = (_) => { theory.invalidatePrimaryEquation(); updateAvailability(); }
+        n_unlock.canBeRefunded = (_) => true;
     }
 
     // Story Chapters
@@ -233,7 +269,7 @@ var init = () => {
     story_chapter_2 += "But somewhere in the back of your mind\n";
     story_chapter_2 += "you can't quite shake the feeling that you've missed something.\n";
     story_chapter_2 += "You go over and double check all of your equations again to be sure.";
-    theory.createStoryChapter(1, "Uneasy Feeling", story_chapter_2, () => currency.value > BigNumber.TEN.pow(8)); // unlocked at rho = 1e7
+    theory.createStoryChapter(1, "Uneasy Feeling", story_chapter_2, () => currency.value > BigNumber.TEN.pow(7)); // unlocked at rho = 1e7
 
     let story_chapter_3 = "";
     story_chapter_3 += "You've spent weeks staring at your formula to no avail.\n";
@@ -244,7 +280,7 @@ var init = () => {
     story_chapter_3 += "What if the series doesn't diverge\n";
     story_chapter_3 += "and converges after all?\n";
     story_chapter_3 += "You make a small modification to the computation of rdot.";
-    theory.createStoryChapter(2, "Challenging Assumptions", story_chapter_3, () => currency.value > BigNumber.TEN.pow(getCustomCost(0))); // unlocked at R dimension milestone
+    theory.createStoryChapter(2, "Challenging Assumptions", story_chapter_3, () => currency.value > BigNumber.TEN.pow(getMilestoneCost(0))); // unlocked at R dimension milestone
 
     let story_chapter_4 = "";
     story_chapter_4 += "Your progress has improved dramatically since revisiting your hypothesis.\n";
@@ -253,7 +289,7 @@ var init = () => {
     story_chapter_4 += "You're starting to get stuck again.\n";
     story_chapter_4 += "Maybe making time move faster will help.\n";
     story_chapter_4 += "You take the variable 't' and move it to a different part of your equation.";
-    theory.createStoryChapter(3, "Temporal Manipulation", story_chapter_4, () => currency.value > BigNumber.TEN.pow(getCustomCost(1))); // unlocked at I dimension milestone
+    theory.createStoryChapter(3, "Temporal Manipulation", story_chapter_4, () => currency.value > BigNumber.TEN.pow(getMilestoneCost(1))); // unlocked at I dimension milestone
 
     let story_chapter_5 = "";
     story_chapter_5 += "You manage to create a lower bound for the number the series converges to.\n";
@@ -263,7 +299,7 @@ var init = () => {
     story_chapter_5 += "\"Have you tried modifying the variable 'a'?\"\n";
     story_chapter_5 += "You realize that in all your research, you'd never thought to change that value.\n";
     story_chapter_5 += "You try increasing the value of 'a', and see what happens.\n";
-    theory.createStoryChapter(4, "Exponential Growth", story_chapter_5, () => currency.value > BigNumber.TEN.pow(getCustomCost(2))); // unlocked at a_base first milestone
+    theory.createStoryChapter(4, "Exponential Growth", story_chapter_5, () => currency.value > BigNumber.TEN.pow(getMilestoneCost(2))); // unlocked at a_base first milestone
 
     let story_chapter_6 = "";
     story_chapter_6 += "It worked!\n"
@@ -273,7 +309,7 @@ var init = () => {
     story_chapter_6 += "But you want to improve the bounds.\n";
     story_chapter_6 += "You look over your equation again and realize you've never manipulated the variable 'q1'.\n";
     story_chapter_6 += "You try adding a variable 'q2' and see what happens.";
-    theory.createStoryChapter(5, "Bounds", story_chapter_6, () => currency.value > BigNumber.TEN.pow(getCustomCost(8))); // unlocked at a_base last milestone
+    theory.createStoryChapter(5, "Bounds", story_chapter_6, () => currency.value > BigNumber.TEN.pow(getMilestoneCost(3))); // unlocked at a_base last milestone
 
     let story_chapter_7 = "";
     story_chapter_7 += "You've been making good progress.\n";
@@ -282,7 +318,7 @@ var init = () => {
     story_chapter_7 += "But you're not satisfied.\n";
     story_chapter_7 += "You want to know the exact value.\n";
     story_chapter_7 += "You continue onwards...";
-    theory.createStoryChapter(6, "Getting Close", story_chapter_7, () => currency.value > BigNumber.TEN.pow(getCustomCost(15))); // unlocked at a_exponent first milestone
+    theory.createStoryChapter(6, "Getting Close", story_chapter_7, () => currency.value > BigNumber.TEN.pow(getMilestoneCost(18))); // unlocked at a_exponent first milestone
 
     let story_chapter_8 = "";
     story_chapter_8 += "Months have passed.\n";
@@ -293,7 +329,7 @@ var init = () => {
     story_chapter_8 += "Is this the end?\n";
     story_chapter_8 += "You're not quite ready to give up yet.\n";
     story_chapter_8 += "You continue to forge ahead with your research, as slow as it might be.\n";
-    theory.createStoryChapter(7, "Desperation", story_chapter_8, () => currency.value > BigNumber.TEN.pow(getCustomCost(16)-100)); // unlocked at a_exp and a_base max milestone
+    theory.createStoryChapter(7, "Desperation", story_chapter_8, () => currency.value > BigNumber.TEN.pow(getMilestoneCost(20)-50)); // unlocked at a_exp and a_base max milestone
 
     let story_chapter_9 = "";
     story_chapter_9 += "One night, you sleep restlessly.\n";
@@ -308,7 +344,7 @@ var init = () => {
     story_chapter_9 += "And you know how to prove it.\n";
     story_chapter_9 += "You leap out of bed.\n";
     story_chapter_9 += "Hands shaking with excitement, you make one final change to the variable 'a'.\n";
-    theory.createStoryChapter(8, "EUREKA!!!", story_chapter_9, () => currency.value > BigNumber.TEN.pow(getCustomCost(16))); // unlocked at tau = e100 (b2 first milestone)
+    theory.createStoryChapter(8, "EUREKA!!!", story_chapter_9, () => currency.value > BigNumber.TEN.pow(getMilestoneCost(20))); // unlocked at tau = e100 (b2 first milestone)
 
     let story_chapter_10 = "";
     story_chapter_10 += "You've finally done it.\n"
@@ -343,8 +379,57 @@ var predicateAndCallbackPopup = () => {
     return false;
 }
 
+
 // milestone costs in rho
-var getCustomCost = (level) => {
+var getAUpgradeCost = (level) => {
+    switch(level) {
+        case 0:
+            return 20;
+        case 1:
+            return 30;
+        case 2:
+            return 50;
+        case 3:
+            return 100;
+        case 4:
+            return 150;
+        case 5:
+            return 250;
+        case 6:
+            return 400;
+        case 7:
+            return 600;
+        case 8:
+            return 900;
+    }
+    return 5000;
+};
+
+var getQUpgradeCost = (level) => {
+    switch(level) {
+        case 0:
+            return 25;
+        case 1:
+            return 40;
+        case 2:
+            return 75;
+        case 3:
+            return 125;
+        case 4:
+            return 200;
+        case 5:
+            return 300;
+        case 6:
+            return 500;
+        case 7:
+            return 700;
+    }
+    return 5000;
+};
+
+
+// milestone costs in rho
+var getMilestoneCost = (level) => {
     switch(level) {
         case 0:
             return 10;
@@ -357,29 +442,35 @@ var getCustomCost = (level) => {
         case 4:
             return 30;
         case 5:
-            return 35;
-        case 6:
             return 40;
+        case 6:
+            return 65;
         case 7:
-            return 45;
+            return 90;
         case 8:
-            return 50;
+            return 115;
         case 9:
-            return 125;
+            return 140;
         case 10:
-            return 200;
+            return 180;
         case 11:
-            return 275;
+            return 220;
         case 12:
-            return 350;
+            return 260;
         case 13:
-            return 425;
+            return 300;
         case 14:
-            return 500;
+            return 400;
         case 15:
-            return 575;
+            return 500;
         case 16:
-            return 1500;
+            return 600;
+        case 17:
+            return 700;
+        case 18:
+            return 900;
+        case 19:
+            return 1100;
     }
     return 5000;
 };
@@ -388,10 +479,12 @@ var updateAvailability = () => {
     t_speed.isAvailable = true;
     r_upgrade.isAvailable = true;
     t_upgrade.isAvailable = r_upgrade.level > 0;
-    a_level.isAvailable = t_upgrade.level > 0;
-    dimension.isAvailable = a_level.level > 5;
-    final_a_level.isAvailable = dimension.level > 7;
+    a_level.isAvailable = t_upgrade.level > 0 && perm1.level > 0;
+    dimension.isAvailable = t_upgrade.level > 0 && perm2.level > 0;
+    n_unlock.isAvailable = dimension.level > 7 && a_level.level > 8;
 
+    a_level.maxLevel = 0 + perm1.level;
+    dimension.maxLevel = 0 + perm2.level;
 
     c1.isAvailable = true;
     c2.isAvailable = true;
@@ -412,6 +505,7 @@ var updateAvailability = () => {
     q7.isAvailable = dimension.level > 5;
     q8.isAvailable = dimension.level > 6;
     q9.isAvailable = dimension.level > 7;
+    n.isAvailable = n_unlock.level > 0;
 }
 
 var postPublish = () => {
@@ -492,35 +586,35 @@ var tick = (elapsedTime, multiplier) => {
         // q calc
         if (dimension.level > 7) {
             let vc10 = getC10(c10.level);
-            q9 += vc10 * dt / BigNumber.from(1000);
+            q9 += vc10 * dt;
         }
         if (dimension.level > 6) {
             let vc9 = getC9(c9.level);
-            q8 += vc9 * q9 * dt / BigNumber.from(1000);
+            q8 += vc9 * (dimension.level > 7 ? q9 : BigNumber.ONE) * dt;
         }
         if (dimension.level > 5) {
             let vc8 = getC8(c8.level);
-            q7 += vc8 * q8 * dt / BigNumber.from(1000);
+            q7 += vc8 * (dimension.level > 6 ? q8 : BigNumber.ONE) * dt;
         }
         if (dimension.level > 4) {
             let vc7 = getC7(c7.level);
-            q6 += vc7 * q7 * dt / BigNumber.from(1000);
+            q6 += vc7 * (dimension.level > 5 ? q7 : BigNumber.ONE) * dt;
         }
         if (dimension.level > 3) {
             let vc6 = getC6(c6.level);
-            q5 += vc6 * q6 * dt / BigNumber.from(1000);
+            q5 += vc6 * (dimension.level > 4 ? q6 : BigNumber.ONE) * dt;
         }
         if (dimension.level > 2) {
             let vc5 = getC5(c5.level);
-            q4 += vc5 * q5 * dt / BigNumber.from(1000);
+            q4 += vc5 * (dimension.level > 3 ? q5 : BigNumber.ONE) * dt;
         }
         if (dimension.level > 1) {
             let vc4 = getC4(c4.level);
-            q3 += vc4 * q4 * dt / BigNumber.from(1000);
+            q3 += vc4 * (dimension.level > 2 ? q4 : BigNumber.ONE) * dt;
         }
         if (dimension.level > 0) {
             let vc3 = getC3(c3.level);
-            q2 += vc3 * q3 * dt / BigNumber.from(1000);
+            q2 += vc3 * (dimension.level > 1 ? q3 : BigNumber.ONE) * dt;
         }
 
         let vc2 = getC2(c2.level);
@@ -529,10 +623,15 @@ var tick = (elapsedTime, multiplier) => {
         // r calc
         r += getRdot(getC1(c1.level), r_upgrade.level > 0) * dt;
 
+        let vn = 0;
+        if (n_unlock.level > 0) {
+            vn = getN(n.level)
+        }
+
         if (t_upgrade.level == 0) {
-            currency.value += dt * bonus * (t * q1 * r).pow(getA(a_level.level, final_a_level.level));
+            currency.value += dt * bonus * (t * q1 * r).pow(getA(a_level.level, n_unlock.level > 0, vn));
         } else {
-            currency.value += dt * bonus * t * (q1 * r).pow(getA(a_level.level, final_a_level.level));
+            currency.value += dt * bonus * t * (q1 * r).pow(getA(a_level.level, n_unlock.level > 0, vn));
         }
     }
 
@@ -568,10 +667,10 @@ var getPrimaryEquation = () => {
 
     result += "a = ";
 
-    if (final_a_level.level == 0) {
-        result += getA(a_level.level, final_a_level.level)
+    if (n_unlock.level == 0) {
+        result += getA(a_level.level, n_unlock.level > 0, 0).toFixed(3)
     } else {
-        result += "6/\\pi^2"
+        result += getA(a_level.level, n_unlock.level > 0, getN(n.level)).toFixed(3)
     }
 
     result += "\\end{array}";
@@ -581,18 +680,23 @@ var getPrimaryEquation = () => {
 var getSecondaryEquation = () => {
     let result = "\\begin{array}{c}";
     theory.secondaryEquationScale = 1.0;
-    theory.secondaryEquationHeight = 120;
+    theory.secondaryEquationHeight = 140;
+
+    if (a_level.level > 0) {
+        if (n_unlock.level == 0) {
+            result += "a = 0.2 + \\sum_{i=0}^{" + (a_level.level) + "} \\frac{(10-i)^2}{1000}";
+        } else {
+            result += "a = 2 \\cdot \\frac{6}{\\pi^2} - \\left(\\sum_{i=1}^{n} \\frac{1}{i^2}\\right)^{-1}"
+        }
+        result += "\\\\"
+    }
+
 
     if (dimension.level == 0) {
         result += "\\dot{q_1} = c_2";
-    } else if (dimension.level == 1) {
-        result += "\\dot{q_1} = c_2 q_2\\\\";
-        result += "\\dot{q_" + (dimension.level + 1) + "} = c_{" + (dimension.level + 2) + "}/1000";
-    }
-    else {
-        result += "\\dot{q_1} = c_2 q_2\\\\";
-        result += "\\dot{q_i} = c_{i+1} q_{i+1}/1000, \\quad 2 \\leq i \\leq " + dimension.level + "\\\\";
-        result += "\\dot{q_" + (dimension.level + 1) + "} = c_{" + (dimension.level + 2) + "}/1000";
+    } else {
+        result += "\\dot{q_i} = c_{i+1} q_{i+1}, \\quad 1 \\leq i \\leq " + (dimension.level) + "\\\\";
+        result += "\\dot{q_" + (dimension.level + 1) + "} = c_{" + (dimension.level + 2) + "}";
     }
 
     result += "\\\\";
@@ -616,7 +720,7 @@ var getQuaternaryEntries = () => {
     quaternaryEntries = [];
     quaternaryEntries.push(new QuaternaryEntry("t", null));
     for (let i = 0; i <= dimension.level; i++) {
-        quaternaryEntries.push(new QuaternaryEntry("q_" + (i+1), null));
+        quaternaryEntries.push(new QuaternaryEntry("q_{" + (i+1) +"}", null));
     }
     quaternaryEntries.push(new QuaternaryEntry("r", null));
 
@@ -634,13 +738,13 @@ var getQuaternaryEntries = () => {
 // -------------------------------------------------------------------------------
 
 var get2DGraphValue = () => currency.value.sign * (BigNumber.ONE + currency.value.abs()).log10().toNumber();
-var getPublicationMultiplier = (tau) => tau.pow(0.1761);
-var getPublicationMultiplierFormula = (symbol) => symbol + "^{0.1761}";
+var getPublicationMultiplier = (tau) => 5 *tau.pow(0.132075);
+var getPublicationMultiplierFormula = (symbol) => "5" + symbol + "^{0.132075}";
 var isCurrencyVisible = (index) => index == 0 || (index == 1 && dimension.level > 0) || (index == 2 && dimension.level > 1);
 var getTau = () => currency.value.pow(BigNumber.from(tauMultiplier));
 var getCurrencyFromTau = (tau) => [tau.max(BigNumber.ONE).pow(1/tauMultiplier), currency.symbol];
 
-var getC1 = (level) => Utils.getStepwisePowerSum(level, 2, 10, 0);
+var getC1 = (level) => Utils.getStepwisePowerSum(level, 65536, 64, 0);
 var getC2 = (level) => BigNumber.TWO.pow(level);
 var getC3 = (level) => BigNumber.THREE.pow(level);
 var getC4 = (level) => BigNumber.FOUR.pow(level);
@@ -650,7 +754,29 @@ var getC7 = (level) => BigNumber.SEVEN.pow(level);
 var getC8 = (level) => BigNumber.EIGHT.pow(level);
 var getC9 = (level) => BigNumber.NINE.pow(level);
 var getC10 = (level) => BigNumber.TEN.pow(level);
-var getA = (level, final_a) => (final_a ? BigNumber.from(6/(Math.PI*Math.PI)) : BigNumber.from(0.3 + 0.05 * level));
+var getN = (level) => Utils.getStepwisePowerSum(level, 6, 19, 0)+1;
+var getA = (level, n_unlocked, n_value) => {
+    if (n_unlocked) {
+        let partial_sum = 0;
+
+        if (n_value <= 100) { //exact computation
+            for (let i = 1; i <= n_value; i++) {
+                partial_sum += 1 / (i * i);
+            }
+        } else {
+            partial_sum = ((Math.PI * Math.PI) / 6 - (1 / (n_value + 1) + 1 / (2 * ((n_value + 1) * (n_value + 1))))).toNumber();
+        }
+
+        return 12 / (Math.PI * Math.PI) - 1.0 / partial_sum;
+    }
+    else {
+        a = 0.3
+        for (let i = 9; i > 9 - level; i--) {
+            a += i*i / 1000;
+        }
+        return a;
+    }
+}
 
 var getRdot = (c1, r_ms) => {
     if (c1 == 0) {
