@@ -273,7 +273,7 @@ var init = () => {
     story_chapter_2 += "But somewhere in the back of your mind\n";
     story_chapter_2 += "you can't quite shake the feeling that you've missed something.\n";
     story_chapter_2 += "You go over and double check all of your equations again to be sure.";
-    theory.createStoryChapter(1, "Uneasy Feeling", story_chapter_2, () => currency.value > BigNumber.TEN.pow(7)); // unlocked at rho = 1e7
+    theory.createStoryChapter(1, "Uneasy Feeling", story_chapter_2, () => num_publications > 0); // unlocked at rho = 1e7
 
     let story_chapter_3 = "";
     story_chapter_3 += "You've spent weeks staring at your formula to no avail.\n";
