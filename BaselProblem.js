@@ -15,8 +15,8 @@ import {game} from "./api/Game";
 
 requiresGameVersion("1.4.33");
 
-var id = "basel_problem_speedup";
-var name = "Basel Problem (sped up)";
+var id = "basel_problem";
+var name = "Basel Problem";
 var description =
     "The Basel problem is a legendary puzzle in mathematics, first proposed in the 17th century and famously solved by Leonhard Euler. " +
     "It asks a deceptively simple question: what is the sum of the inverse squares of all positive integers? " +
