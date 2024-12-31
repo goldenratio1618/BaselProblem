@@ -15,12 +15,12 @@ import {game} from "./api/Game";
 
 requiresGameVersion("1.4.33");
 
-var id = "basel_problem";
-var name = "Basel Problem";
+var id = "basel_problem_speedup";
+var name = "Basel Problem (sped up)";
 var description =
     "The Basel problem is a legendary puzzle in mathematics, first proposed in the 17th century and famously solved by Leonhard Euler. " +
     "It asks a deceptively simple question: what is the sum of the inverse squares of all positive integers? " +
-    "This infinite series, $\\frac{1}{1^2} + \\frac{1}{2^2} + \\frac{1}{3^2} + \\cdots$, converges to a finite value...but what? " +
+    "This infinite series, 1/1 + 1/4 + 1/9 + 1/16 + ..., converges to a finite value, but what? " +
     "\n" + "In the Basel Problem theory, stand in Euler's shoes as you navigate the world of inverse squares. " +
     "Everything in this theory revolves around them - variables based on partial sums, variable power scaling, and even the publication multiplier. " +
     "Can you figure out the solution to this ancient problem?";
@@ -69,8 +69,8 @@ var init = () => {
 
     // t
     {
-        let getDesc = (level) => "\\dot{t}=" + BigNumber.from(0.2 + (0.2 * level)).toString(level > 3 ? 0 : 1);
-        let getInfo = (level) => "\\dot{t}=" + BigNumber.from(0.2 + (0.2 * level)).toString(level > 3 ? 0 : 1);
+        let getDesc = (level) => "\\dot{t}=" + BigNumber.from(1 + (1 * level)).toString(level > 3 ? 0 : 1);
+        let getInfo = (level) => "\\dot{t}=" + BigNumber.from(1 + (1 * level)).toString(level > 3 ? 0 : 1);
         t_speed = theory.createUpgrade(0, currency, new ExponentialCost(1e6, Math.log2(1e6)));
         t_speed.getDescription = (_) => Utils.getMath(getDesc(t_speed.level));
         t_speed.getInfo = (amount) => t_speed.level == t_speed.maxLevel ? Utils.getMath(getInfo(t_speed.level)) : Utils.getMathTo(getInfo(t_speed.level), getInfo(t_speed.level + amount));
@@ -284,7 +284,7 @@ var init = () => {
     story_chapter_3 += "What if the series doesn't diverge\n";
     story_chapter_3 += "and converges after all?\n";
     story_chapter_3 += "You make a small modification to the computation of rdot.";
-    theory.createStoryChapter(2, "Challenging Assumptions", story_chapter_3, () => currency.value > BigNumber.TEN.pow(getMilestoneCost(0))); // unlocked at R dimension milestone
+    theory.createStoryChapter(2, "Challenging Assumptions", story_chapter_3, () => r_upgrade.level > 0); // unlocked at R dimension milestone
 
     let story_chapter_4 = "";
     story_chapter_4 += "Your progress has improved dramatically since revisiting your hypothesis.\n";
@@ -293,7 +293,7 @@ var init = () => {
     story_chapter_4 += "You're starting to get stuck again.\n";
     story_chapter_4 += "Maybe making time move faster will help.\n";
     story_chapter_4 += "You take the variable 't' and move it to a different part of your equation.";
-    theory.createStoryChapter(3, "Temporal Manipulation", story_chapter_4, () => currency.value > BigNumber.TEN.pow(getMilestoneCost(1))); // unlocked at I dimension milestone
+    theory.createStoryChapter(3, "Temporal Manipulation", story_chapter_4, () => t_upgrade.level > 0); // unlocked at I dimension milestone
 
     let story_chapter_5 = "";
     story_chapter_5 += "You manage to create a lower bound for the number the series converges to.\n";
@@ -303,7 +303,7 @@ var init = () => {
     story_chapter_5 += "\"Have you tried modifying the variable 'a'?\"\n";
     story_chapter_5 += "You realize that in all your research, you'd never thought to change that value.\n";
     story_chapter_5 += "You try increasing the value of 'a', and see what happens.\n";
-    theory.createStoryChapter(4, "Exponential Growth", story_chapter_5, () => currency.value > BigNumber.TEN.pow(getMilestoneCost(2))); // unlocked at a_base first milestone
+    theory.createStoryChapter(4, "Exponential Growth", story_chapter_5, () => perm1.level > 0); // unlocked at a_base first milestone
 
     let story_chapter_6 = "";
     story_chapter_6 += "It worked!\n"
@@ -313,7 +313,7 @@ var init = () => {
     story_chapter_6 += "But you want to improve the bounds.\n";
     story_chapter_6 += "You look over your equation again and realize you've never manipulated the variable 'q1'.\n";
     story_chapter_6 += "You try adding a variable 'q2' and see what happens.";
-    theory.createStoryChapter(5, "Bounds", story_chapter_6, () => currency.value > BigNumber.TEN.pow(getMilestoneCost(3))); // unlocked at a_base last milestone
+    theory.createStoryChapter(5, "Bounds", story_chapter_6, () => perm2.level > 0); // unlocked at a_base last milestone
 
     let story_chapter_7 = "";
     story_chapter_7 += "You've been making good progress.\n";
@@ -322,7 +322,7 @@ var init = () => {
     story_chapter_7 += "But you're not satisfied.\n";
     story_chapter_7 += "You want to know the exact value.\n";
     story_chapter_7 += "You continue onwards...";
-    theory.createStoryChapter(6, "Getting Close", story_chapter_7, () => currency.value > BigNumber.TEN.pow(getMilestoneCost(18))); // unlocked at a_exponent first milestone
+    theory.createStoryChapter(6, "Getting Close", story_chapter_7, () => perm1.level > 8); // unlocked at a_exponent first milestone
 
     let story_chapter_8 = "";
     story_chapter_8 += "Months have passed.\n";
@@ -333,7 +333,7 @@ var init = () => {
     story_chapter_8 += "Is this the end?\n";
     story_chapter_8 += "You're not quite ready to give up yet.\n";
     story_chapter_8 += "You continue to forge ahead with your research, as slow as it might be.\n";
-    theory.createStoryChapter(7, "Desperation", story_chapter_8, () => currency.value > BigNumber.TEN.pow(getMilestoneCost(19)-25)); // unlocked at a_exp and a_base max milestone
+    theory.createStoryChapter(7, "Desperation", story_chapter_8, () => currency.value > BigNumber.TEN.pow(getMilestoneCost(19)-25)); // unlocked just before n unlock
 
     let story_chapter_9 = "";
     story_chapter_9 += "One night, you sleep restlessly.\n";
@@ -347,8 +347,8 @@ var init = () => {
     story_chapter_9 += "The series converges to pi^2/6.\n";
     story_chapter_9 += "And you know how to prove it.\n";
     story_chapter_9 += "You leap out of bed.\n";
-    story_chapter_9 += "Hands shaking with excitement, you make one final change to the variable 'a'.\n";
-    theory.createStoryChapter(8, "EUREKA!!!", story_chapter_9, () => currency.value > BigNumber.TEN.pow(getMilestoneCost(19))); // unlocked at tau = e100 (b2 first milestone)
+    story_chapter_9 += "Hands shaking with excitement, you add one final term to your equation.\n";
+    theory.createStoryChapter(8, "EUREKA!!!", story_chapter_9, () => n_unlock.level > 0); 
 
     let story_chapter_10 = "";
     story_chapter_10 += "You've finally done it.\n"
