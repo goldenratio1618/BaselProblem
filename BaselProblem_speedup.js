@@ -623,7 +623,7 @@ var tick = (elapsedTime, multiplier) => {
         }
 
         let vc2 = getC2(c2.level);
-        q1 += vc2 * q2 * dt;
+        q1 += vc2 * (dimension.level > 0 ? q2 : BigNumber.ONE) * dt;
 
         // r calc
         r += getRdot(getC1(c1.level), r_upgrade.level > 0) * dt;
