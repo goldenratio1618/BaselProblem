@@ -524,6 +524,7 @@ var postPublish = () => {
     q8 = BigNumber.ZERO;
     q9 = BigNumber.ZERO;
     r = BigNumber.ZERO;
+    n = BigNumber.ONE;
     num_publications++;
 }
 
