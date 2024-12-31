@@ -585,7 +585,7 @@ var tick = (elapsedTime, multiplier) => {
 
     if (c1.level > 0) {
         // t calc
-        t += ((BigNumber.ONE + BigNumber.from(t_speed.level)) / BigNumber.FIVE) * dt;
+        t += ((BigNumber.ONE + BigNumber.from(t_speed.level))) * dt;
 
         // q calc
         if (dimension.level > 7) {
