@@ -25,8 +25,8 @@ var description =
     "Everything in this theory revolves around them - variables based on partial sums, variable power scaling, and even the publication multiplier. " +
     "Can you figure out the solution to this ancient problem?";
 var authors = "Python's Koala (pythonskoala)";
-var version = 1.1;
-var releaseOrder = "1.1";
+var version = 1.2;
+var releaseOrder = "1.2";
 
 var tauMultiplier = 0.4;
 
@@ -37,16 +37,16 @@ var app_was_closed = false;
 
 // upgrade variables
 var c1, c2, c3, c4, c5, c6, c7, c8, c9, c10;
-var q1 = BigNumber.ONE;
-var q2 = BigNumber.ONE;
-var q3 = BigNumber.ONE;
-var q4 = BigNumber.ONE;
-var q5 = BigNumber.ONE;
-var q6 = BigNumber.ONE;
-var q7 = BigNumber.ONE;
-var q8 = BigNumber.ONE;
-var q9 = BigNumber.ONE;
-var r = BigNumber.ONE;
+var q1 = BigNumber.ZERO;
+var q2 = BigNumber.ZERO;
+var q3 = BigNumber.ZERO;
+var q4 = BigNumber.ZERO;
+var q5 = BigNumber.ZERO;
+var q6 = BigNumber.ZERO;
+var q7 = BigNumber.ZERO;
+var q8 = BigNumber.ZERO;
+var q9 = BigNumber.ZERO;
+var r = BigNumber.ZERO;
 var n = BigNumber.ONE;
 
 // milestone variables
@@ -515,14 +515,14 @@ var updateAvailability = () => {
 var postPublish = () => {
     t = BigNumber.ZERO;
     q1 = BigNumber.ZERO;
-    q2 = BigNumber.ONE;
-    q3 = BigNumber.ONE;
-    q4 = BigNumber.ONE;
-    q5 = BigNumber.ONE;
-    q6 = BigNumber.ONE;
-    q7 = BigNumber.ONE;
-    q8 = BigNumber.ONE;
-    q9 = BigNumber.ONE;
+    q2 = BigNumber.ZERO;
+    q3 = BigNumber.ZERO;
+    q4 = BigNumber.ZERO;
+    q5 = BigNumber.ZERO;
+    q6 = BigNumber.ZERO;
+    q7 = BigNumber.ZERO;
+    q8 = BigNumber.ZERO;
+    q9 = BigNumber.ZERO;
     r = BigNumber.ZERO;
     num_publications++;
 }
@@ -573,7 +573,7 @@ var getEndPopup = ui.createPopup({
 
 
 var tick = (elapsedTime, multiplier) => {
-    let dt = BigNumber.from(elapsedTime * multiplier);
+    let dt = BigNumber.from(elapsedTime * multiplier) * 20;
     let bonus = BigNumber.from(theory.publicationMultiplier);
 
     if(game.isCalculatingOfflineProgress) {
