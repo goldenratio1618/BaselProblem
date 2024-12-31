@@ -573,7 +573,7 @@ var getEndPopup = ui.createPopup({
 
 
 var tick = (elapsedTime, multiplier) => {
-    let dt = BigNumber.from(elapsedTime * multiplier) * 20;
+    let dt = BigNumber.from(elapsedTime * multiplier);
     let bonus = BigNumber.from(theory.publicationMultiplier);
 
     if(game.isCalculatingOfflineProgress) {
