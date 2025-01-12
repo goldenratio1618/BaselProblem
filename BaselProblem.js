@@ -24,9 +24,9 @@ var description =
     "\n" + "In the Basel Problem theory, stand in Euler's shoes as you navigate the world of inverse squares. " +
     "Everything in this theory revolves around them - variables based on partial sums, variable power scaling, and even the publication multiplier. " +
     "Can you figure out the solution to this ancient problem?";
-var authors = "Python's Koala (pythonskoala)";
-var version = 1.2;
-var releaseOrder = "1.2";
+var authors = "Python's Koala\n\nThanks to Mathis S. for developing the simulation for theory balancing.";
+var version = 1.3;
+var releaseOrder = "1.3";
 
 var tauMultiplier = 0.4;
 
