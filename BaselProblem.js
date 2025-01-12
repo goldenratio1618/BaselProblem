@@ -394,11 +394,11 @@ var getAUpgradeCost = (level) => {
         case 2:
             return 50;
         case 3:
-            return 100;
+            return 80;
         case 4:
-            return 150;
+            return 140;
         case 5:
-            return 250;
+            return 240;
         case 6:
             return 400;
         case 7:
@@ -416,11 +416,11 @@ var getQUpgradeCost = (level) => {
         case 1:
             return 40;
         case 2:
-            return 75;
+            return 60;
         case 3:
-            return 125;
+            return 100;
         case 4:
-            return 200;
+            return 180;
         case 5:
             return 300;
         case 6:
@@ -448,19 +448,19 @@ var getMilestoneCost = (level) => {
         case 5:
             return 40;
         case 6:
-            return 65;
+            return 50;
         case 7:
-            return 90;
+            return 70;
         case 8:
-            return 115;
+            return 90;
         case 9:
-            return 140;
+            return 120;
         case 10:
-            return 180;
+            return 150;
         case 11:
-            return 220;
+            return 200;
         case 12:
-            return 260;
+            return 250;
         case 13:
             return 300;
         case 14:
