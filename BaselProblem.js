@@ -36,7 +36,7 @@ var quaternaryEntries;
 var app_was_closed = false;
 
 // upgrade variables
-var c1, c2, c3, c4, c5, c6, c7, c8, c9, c10;
+var c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, n;
 var q1 = BigNumber.ZERO;
 var q2 = BigNumber.ZERO;
 var q3 = BigNumber.ZERO;
@@ -47,7 +47,6 @@ var q7 = BigNumber.ZERO;
 var q8 = BigNumber.ZERO;
 var q9 = BigNumber.ZERO;
 var r = BigNumber.ZERO;
-var n = BigNumber.ONE;
 
 // milestone variables
 var r_upgrade, t_upgrade;
@@ -524,7 +523,6 @@ var postPublish = () => {
     q8 = BigNumber.ZERO;
     q9 = BigNumber.ZERO;
     r = BigNumber.ZERO;
-    n = BigNumber.ONE;
     num_publications++;
 }
 
