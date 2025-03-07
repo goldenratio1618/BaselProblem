@@ -25,8 +25,8 @@ var description =
     "Everything in this theory revolves around them - variables based on partial sums, variable power scaling, and even the publication multiplier. " +
     "Can you figure out the solution to this ancient problem?";
 var authors = "Python's Koala\n\nThanks to Mathis S. for developing the simulation for theory balancing.";
-var version = 1.3;
-var releaseOrder = "1.3";
+var version = 2;
+var releaseOrder = "9";
 
 var tauMultiplier = 0.4;
 
